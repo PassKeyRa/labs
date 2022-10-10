@@ -57,4 +57,11 @@ resource "yandex_compute_instance" "box" {
       private_key = file("~/.ssh/yandex_key")
     }
   }
+  provisioner "local-exec" {
+    working_dir = "../../ansible"
+    environment = {
+        ANSIBLE_HOST_KEY_CHECKING = "False"
+    }
+    command = "ansible-playbook -u '${var.vm_user}' -i '${self.network_interface.0.nat_ip_address},' --private-key=~/.ssh/yandex_key playbooks/dev/main.yml"
+  }
 }
